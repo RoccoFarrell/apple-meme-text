@@ -56,7 +56,7 @@
                     </v-card-title>
                     <v-card-text>
                       <p v-for="user of users">
-                        {{user.name}}
+                        {{user.name}},{{user.email}},{{user.select}},{{user.checkbox}}
                       </p>
                     </v-card-text>
                   </v-card>
