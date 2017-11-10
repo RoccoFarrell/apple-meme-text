@@ -1,5 +1,6 @@
 <template>
   <v-app>
+  <!--
     <v-navigation-drawer
       persistent
       :mini-variant="miniVariant"
@@ -23,6 +24,8 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+
+  -->
     <v-toolbar fixed app :clipped-left="clipped">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn icon @click.stop="miniVariant = !miniVariant">
@@ -36,9 +39,11 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <!--
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn>
+    -->
     </v-toolbar>
     <main>
       <v-content>
@@ -50,14 +55,16 @@
                   <v-card color="cyan darken-4" class="white--text">
                     <v-card-title primary-title>
                       <div>
-                        <h3 class="headline mb-0">Db contents</h3>
+                        <p class="headline mb-3">Converted Text</p>
 
                       </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        <p>{{ timesCopied }} phrases copied</p>
+                      </div>
                     </v-card-title>
-                    <v-card-text>
-                      <p v-for="user of users">
-                        {{user.name}},{{user.email}},{{user.select}},{{user.checkbox}}
-                      </p>
+                    <v-card-text @copy="onCopy">
+                      {{ convertedMessage }}
                     </v-card-text>
                   </v-card>
                 </v-flex>
@@ -65,20 +72,33 @@
               <v-flex xs12>
               <v-form v-model="valid" ref="form" lazy-validation>
                 <v-text-field
-                  label="Name"
-                  v-model="name"
-                  :rules="nameRules"
-                  :counter="10"
+                  label="Text to be converted"
+                  v-model="converttext"
+                  :rules="textRules"
+                  :counter="280"
                   required
                 ></v-text-field>
+                <v-text-field
+                  label="First Name"
+                  v-model="firstname"
+                  :rules="nameRules"
+                  :counter="20"
+                ></v-text-field>
+                <v-text-field
+                  label="Country"
+                  v-model="country"
+                  :counter="20"
+                ></v-text-field>
+                <!--
                 <v-text-field
                   label="E-mail"
                   v-model="email"
                   :rules="emailRules"
                   required
                 ></v-text-field>
+              -->
                 <v-select
-                  label="Item"
+                  label="Conversion Type"
                   v-model="select"
                   :items="items"
                   :rules="[v => !!v || 'Item is required']"
@@ -137,20 +157,26 @@
       clipped: false,
       drawer: true,
       fixed: false,
-      items: [
+      /*  items: [
         { icon: 'bubble_chart', title: 'Inspire' }
-      ],
+      ],*/
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js',
+      title: 'A? Converter',
       valid: true,
       users: {},
+      converttext: '',
+      textRules: [
+        (v) => v && v.length <= 280 || 'Text must be less than 280 characters'
+      ],
       name: '',
       nameRules: [
         (v) => !!v || 'Name is required',
-        (v) => v && v.length <= 10 || 'Name must be less than 10 characters'
+        (v) => v && v.length <= 20 || 'Name must be less than 20 characters'
       ],
+      country:'',
+      firstname: '',
       email: '',
       emailRules: [
         (v) => !!v || 'E-mail is required',
@@ -158,12 +184,12 @@
       ],
       select: null,
       items: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4'
+        'Convert "i"s to A[?]',
+        'i n s e r t s p a c e s',
+        'Both',
       ],
-      checkbox: false
+      checkbox: false,
+      timesCopied: 0
     }),
     methods: {
       submit () {
@@ -175,18 +201,27 @@
               select: this.select,
               checkbox: this.checkbox
             })
-/*
+          /*
           axios.post('/api/submit', {
             name: this.name,
             email: this.email,
             select: this.select,
             checkbox: this.checkbox
           })
-*/
+          */
         }
       },
       clear () {
         this.$refs.form.reset()
+      },
+      onCopy () {
+        console.log("copy detected")
+        this.timesCopied++
+      }
+    },
+    computed: {
+      convertedMessage: function () {
+        return this.converttext.replace(/i/g,'A?')
       }
     },
     firebase: {
@@ -197,6 +232,6 @@
           console.error(err);
         }
       }
-  }
+    }
   }
 </script>
